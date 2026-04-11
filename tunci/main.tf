@@ -55,7 +55,7 @@ resource "vercel_project_environment_variables" "tunci" {
     {
       key       = "ALGOLIA_API_KEY"
       value     = var.algolia_api_key
-      target    = ["production", "preview", "development"]
+      target    = ["production", "preview"]
       sensitive = true
     },
     {
@@ -71,7 +71,7 @@ resource "vercel_project_environment_variables" "tunci" {
     {
       key       = "HF_TOKEN",
       value     = var.hf_token
-      target    = ["production", "preview", "development"]
+      target    = ["production", "preview"]
       sensitive = true
     }
   ]

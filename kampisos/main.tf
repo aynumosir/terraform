@@ -56,7 +56,7 @@ resource "vercel_project_environment_variables" "kampisos" {
       key       = "ALGOLIA_API_KEY"
       value     = var.algolia_api_key
       sensitive = true
-      target    = ["production", "preview", "development"]
+      target    = ["production", "preview"]
     },
     {
       key    = "MICROCMS_SERVICE_DOMAIN"
@@ -67,7 +67,7 @@ resource "vercel_project_environment_variables" "kampisos" {
       key       = "MICROCMS_API_KEY"
       value     = var.microcms_api_key
       sensitive = true
-      target    = ["production", "preview", "development"]
+      target    = ["production", "preview"]
     }
   ]
 }
