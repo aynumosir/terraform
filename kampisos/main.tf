@@ -7,7 +7,7 @@ terraform {
 
     vercel = {
       source = "vercel/vercel"
-      version = "~> 0.3"
+      version = ">= 4.7.1"
     }
   }
 
@@ -44,3 +44,30 @@ resource "vercel_project_domain" "kampisos_aynu_io" {
   domain     = "kampisos.aynu.io"
 }
 
+resource "vercel_project_environment_variables" "kampisos" {
+  project_id = vercel_project.kampisos.id
+  variables = [
+    {
+      key    = "ALGOLIA_APP_ID"
+      value  = var.algolia_app_id
+      target = ["production", "preview", "development"]
+    },
+    {
+      key       = "ALGOLIA_API_KEY"
+      value     = var.algolia_api_key
+      sensitive = true
+      target    = ["production", "preview", "development"]
+    },
+    {
+      key    = "MICROCMS_SERVICE_DOMAIN"
+      value  = var.microcms_service_domain
+      target = ["production", "preview", "development"]
+    },
+    {
+      key       = "MICROCMS_API_KEY"
+      value     = var.microcms_api_key
+      sensitive = true
+      target    = ["production", "preview", "development"]
+    }
+  ]
+}
