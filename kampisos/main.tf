@@ -21,21 +21,6 @@ terraform {
   }
 }
 
-import {
-  to = cloudflare_dns_record.kampisos_aynu_io
-  id = "7b42f86a86701ddbccaac476cabfa6fa/c0b07077e5b94e2f469cca09f7734d92"
-}
-
-import {
-  to = vercel_project.kampisos
-  id = "prj_vkC3QyumHZqksI5LUH2xjDSNSvFk"
-}
-
-import {
-  to = vercel_project_domain.kampisos_aynu_io
-  id = "prj_vkC3QyumHZqksI5LUH2xjDSNSvFk/kampisos.aynu.io"
-}
-
 resource "cloudflare_dns_record" "kampisos_aynu_io" {
   zone_id = "${var.cloudflare_zone_id}"
   name    = "kampisos"
