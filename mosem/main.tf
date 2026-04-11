@@ -21,31 +21,6 @@ terraform {
   }
 }
 
-import {
-  to = cloudflare_dns_record.aynu_io
-  id = "7b42f86a86701ddbccaac476cabfa6fa/4879d09cae146a8631a981384f770183"
-}
-
-import {
-  to = cloudflare_dns_record.www_aynu_io
-  id = "7b42f86a86701ddbccaac476cabfa6fa/6cb06f82912f5974f73495f9e6ed6691"
-}
-
-import {
-  to = vercel_project.mosem
-  id = "prj_Hv8AjqdM41DMFLYKOJeUfy6vlm4G"
-}
-
-import {
-  to = vercel_project_domain.www_aynu_io
-  id = "prj_Hv8AjqdM41DMFLYKOJeUfy6vlm4G/www.aynu.io"
-}
-
-import {
-  to = vercel_project_domain.aynu_io
-  id = "prj_Hv8AjqdM41DMFLYKOJeUfy6vlm4G/aynu.io"
-}
-
 resource "cloudflare_dns_record" "aynu_io" {
   zone_id = "${var.cloudflare_zone_id}"
   name    = "aynu.io"
