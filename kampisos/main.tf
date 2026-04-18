@@ -9,6 +9,11 @@ terraform {
       source = "vercel/vercel"
       version = ">= 4.7.1"
     }
+
+    elasticstack = {
+      source = "elastic/elasticstack"
+      version = ">= 0.14.3" 
+    }
   }
 
   backend "remote" {
@@ -19,6 +24,55 @@ terraform {
       name = "kampisos"
     }
   }
+}
+
+provider "elasticstack" {
+  elasticsearch {}
+}
+
+resource "elasticstack_elasticsearch_security_api_key" "vercel" {
+  name = "kampisos-vercel-production"
+
+  role_descriptors = jsonencode({
+    readonly = {
+      indices = [{
+        names      = ["kampisos-*"]
+        privileges = ["read"]
+      }]
+    }
+  })
+}
+
+resource "elasticstack_elasticsearch_index" "entries" {
+  name = "kampisos-entries"
+
+  analysis_analyzer = jsonencode({
+    japanese = {
+      type = "kuromoji"
+      mode = "search"
+    }
+  })
+
+  mappings = jsonencode({
+    properties = {
+      id = { type = "keyword" }
+      collection_lv1 = { type = "keyword" }
+      collection_lv2 = { type = "keyword" }
+      collection_lv3 = { type = "keyword" }
+      document = { type = "keyword" }
+      uri = { type = "keyword" }
+      pronoun = { type = "keyword" }
+      author = { type = "keyword" }
+      dialect = { type = "keyword" }
+      dialect_lv1 = { type = "keyword" }
+      dialect_lv2 = { type = "keyword" }
+      dialect_lv3 = { type = "keyword" }
+      text = { type = "text" }
+      translation = { type = "text", analyzer = "japanese" }
+      recorded_at = { type = "keyword" }
+      published_at = { type = "keyword" }
+    }
+  })
 }
 
 resource "cloudflare_dns_record" "kampisos_aynu_io" {
@@ -68,6 +122,12 @@ resource "vercel_project_environment_variables" "kampisos" {
       value     = var.microcms_api_key
       sensitive = true
       target    = ["production", "preview"]
-    }
+    },
+    {
+      key       = "ELASTICSEARCH_API_KEY"
+      value     = elasticstack_elasticsearch_security_api_key.vercel.encoded
+      sensitive = true
+      target    = ["production", "preview"]
+    },
   ]
 }
