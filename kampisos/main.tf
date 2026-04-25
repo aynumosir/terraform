@@ -51,11 +51,6 @@ resource "elasticstack_elasticsearch_index" "entries" {
       type = "kuromoji"
       mode = "search"
     }
-
-    # https://www.elastic.co/docs/reference/text-analysis/analysis-ngram-tokenizer
-    ainu = {
-      tokenizer = "ngram"
-    }
   })
 
   mappings = jsonencode({
@@ -72,7 +67,7 @@ resource "elasticstack_elasticsearch_index" "entries" {
       dialect_lv1 = { type = "keyword" }
       dialect_lv2 = { type = "keyword" }
       dialect_lv3 = { type = "keyword" }
-      text = { type = "text", analyzer = "ainu" }
+      text = { type = "text" }
       translation = { type = "text", analyzer = "japanese" }
       recorded_at = { type = "keyword" }
       published_at = { type = "keyword" }
