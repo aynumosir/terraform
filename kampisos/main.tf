@@ -51,6 +51,9 @@ resource "elasticstack_elasticsearch_index" "entries" {
       type = "kuromoji"
       mode = "search"
     }
+    ngram = {
+      tokenizer = "ngram"
+    }
   })
 
   mappings = jsonencode({
@@ -67,7 +70,16 @@ resource "elasticstack_elasticsearch_index" "entries" {
       dialect_lv1 = { type = "keyword" }
       dialect_lv2 = { type = "keyword" }
       dialect_lv3 = { type = "keyword" }
-      text = { type = "text" }
+      text = {
+        type = "text",
+        analyzer = "simple",
+        fields = {
+          ngram = {
+            type = "text"
+            analyzer = "ngram"
+          }
+        }
+      }
       translation = { type = "text", analyzer = "japanese" }
       recorded_at = { type = "keyword" }
       published_at = { type = "keyword" }
@@ -102,17 +114,6 @@ resource "vercel_project_environment_variables" "kampisos" {
   project_id = vercel_project.kampisos.id
   variables = [
     {
-      key    = "ALGOLIA_APP_ID"
-      value  = var.algolia_app_id
-      target = ["production", "preview", "development"]
-    },
-    {
-      key       = "ALGOLIA_API_KEY"
-      value     = var.algolia_api_key
-      sensitive = true
-      target    = ["production", "preview"]
-    },
-    {
       key    = "MICROCMS_SERVICE_DOMAIN"
       value  = var.microcms_service_domain
       target = ["production", "preview", "development"]
@@ -123,9 +124,29 @@ resource "vercel_project_environment_variables" "kampisos" {
       sensitive = true
       target    = ["production", "preview"]
     },
+
+    {
+      key       = "ELASTICSEARCH_ENDPOINTS"
+      value     = "https://elasticsearch.neet.love",
+      sensitive = true
+      target    = ["production", "preview"]
+    },
     {
       key       = "ELASTICSEARCH_API_KEY"
       value     = elasticstack_elasticsearch_security_api_key.vercel.encoded
+      sensitive = true
+      target    = ["production", "preview"]
+    },
+
+    # TODO: Remove these after merging
+    {
+      key    = "ALGOLIA_APP_ID"
+      value  = var.algolia_app_id
+      target = ["production", "preview", "development"]
+    },
+    {
+      key       = "ALGOLIA_API_KEY"
+      value     = var.algolia_api_key
       sensitive = true
       target    = ["production", "preview"]
     },
