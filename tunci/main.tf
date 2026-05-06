@@ -48,17 +48,6 @@ resource "vercel_project_environment_variables" "tunci" {
   project_id = vercel_project.tunci.id
   variables = [
     {
-      key    = "ALGOLIA_APP_ID"
-      value  = var.algolia_app_id
-      target = ["production", "preview", "development"]
-    },
-    {
-      key       = "ALGOLIA_API_KEY"
-      value     = var.algolia_api_key
-      target    = ["production", "preview"]
-      sensitive = true
-    },
-    {
       key    = "HF_MT_ENDPOINT"
       value  = var.hf_mt_endpoint
       target = ["production", "preview", "development"]
