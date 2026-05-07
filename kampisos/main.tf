@@ -14,6 +14,11 @@ terraform {
       source = "elastic/elasticstack"
       version = ">= 0.14.3" 
     }
+
+    github = {
+      source  = "integrations/github"
+      version = ">= 6.12.1"
+    }
   }
 
   backend "remote" {
@@ -28,6 +33,12 @@ terraform {
 
 provider "elasticstack" {
   elasticsearch {}
+}
+
+provider "github" {}
+
+data "github_repository" "kampisos" {
+  full_name = "aynumosir/kampisos"
 }
 
 resource "elasticstack_elasticsearch_security_api_key" "vercel" {
@@ -101,7 +112,7 @@ resource "vercel_project" "kampisos" {
   framework = "nextjs"
   git_repository = {
     type = "github"
-    repo = "aynumosir/kampisos"
+    repo = data.github_repository.kampisos.name
   }
 }
 
@@ -128,7 +139,6 @@ resource "vercel_project_environment_variables" "kampisos" {
     {
       key       = "ELASTICSEARCH_ENDPOINTS"
       value     = "https://elasticsearch.neet.love",
-      sensitive = true
       target    = ["production", "preview"]
     },
     {
@@ -152,3 +162,16 @@ resource "vercel_project_environment_variables" "kampisos" {
     },
   ]
 }
+
+resource "github_actions_secret" "kampisos_elasticsearch_api_key" {
+  repository  = data.github_repository.kampisos.name
+  secret_name = "ELASTICSEARCH_API_KEY"
+  value       = elasticstack_elasticsearch_security_api_key.vercel.encoded
+}
+
+resource "github_actions_secret" "kampisos_elasticsearch_endpoints" {
+  repository  = data.github_repository.kampisos.name
+  secret_name = "ELASTICSEARCH_ENDPOINTS"
+  value       = "https://elasticsearch.neet.love"
+}
+
