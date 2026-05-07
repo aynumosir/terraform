@@ -149,19 +149,6 @@ resource "vercel_project_environment_variables" "kampisos" {
       sensitive = true
       target    = ["production", "preview"]
     },
-
-    # TODO: Remove these after merging
-    {
-      key    = "ALGOLIA_APP_ID"
-      value  = var.algolia_app_id
-      target = ["production", "preview", "development"]
-    },
-    {
-      key       = "ALGOLIA_API_KEY"
-      value     = var.algolia_api_key
-      sensitive = true
-      target    = ["production", "preview"]
-    },
   ]
 }
 
