@@ -35,7 +35,9 @@ provider "elasticstack" {
   elasticsearch {}
 }
 
-provider "github" {}
+provider "github" {
+  owner = "aynumosir"
+}
 
 data "github_repository" "kampisos" {
   full_name = "aynumosir/kampisos"
@@ -112,7 +114,7 @@ resource "vercel_project" "kampisos" {
   framework = "nextjs"
   git_repository = {
     type = "github"
-    repo = data.github_repository.kampisos.name
+    repo = data.github_repository.kampisos.full_name
   }
 }
 
