@@ -60,9 +60,16 @@ resource "elasticstack_elasticsearch_index" "entries" {
   name = "kampisos-entries"
 
   analysis_analyzer = jsonencode({
+    # Same as the standard kuromoji-analyzer, but `kuromoji_part_of_speech` and `ja_stop` were removed
+    # c.f. https://www.elastic.co/docs/reference/elasticsearch/plugins/analysis-kuromoji-analyzer
     japanese = {
-      type = "kuromoji"
-      mode = "search"
+      tokenizer = "kuromoji_tokenizer", 
+      filter = [
+        "kuromoji_baseform",
+        "cjk_width",
+        "kuromoji_stemmer",
+        "lowercase"
+      ]
     }
     ngram = {
       tokenizer = "ngram"
