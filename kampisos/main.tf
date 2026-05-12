@@ -92,7 +92,7 @@ resource "elasticstack_elasticsearch_index" "entries" {
       dialect_lv3 = { type = "keyword" }
       text = {
         type = "text",
-        analyzer = "simple",
+        analyzer = "standard",
         fields = {
           ngram = {
             type = "text"
