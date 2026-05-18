@@ -59,8 +59,24 @@ resource "elasticstack_elasticsearch_security_api_key" "vercel" {
 resource "elasticstack_elasticsearch_index" "entries" {
   name = "kampisos-entries"
 
+  analysis_char_filter = jsonencode({
+    ainu_code_switching = {
+      type = "pattern_replace"
+      pattern = "[\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}]"
+      replacement = ""
+    }
+  })
+
   analysis_analyzer = jsonencode({
-    # Same as the standard kuromoji-analyzer, but `kuromoji_part_of_speech` and `ja_stop` were removed
+    ainu_standard = {
+      tokenizer = "standard"
+      char_filter = ["ainu_code_switching"]
+    }
+    ainu_ngram = {
+      tokenizer = "ngram"
+      char_filter = ["ainu_code_switching"]
+    }
+    # Standard kuromoji-analyzer without `kuromoji_part_of_speech` and `ja_stop`
     # c.f. https://www.elastic.co/docs/reference/elasticsearch/plugins/analysis-kuromoji-analyzer
     japanese = {
       tokenizer = "kuromoji_tokenizer", 
@@ -70,9 +86,6 @@ resource "elasticstack_elasticsearch_index" "entries" {
         "kuromoji_stemmer",
         "lowercase"
       ]
-    }
-    ngram = {
-      tokenizer = "ngram"
     }
   })
 
@@ -92,11 +105,11 @@ resource "elasticstack_elasticsearch_index" "entries" {
       dialect_lv3 = { type = "keyword" }
       text = {
         type = "text",
-        analyzer = "standard",
+        analyzer = "ainu_standard",
         fields = {
           ngram = {
             type = "text"
-            analyzer = "ngram"
+            analyzer = "ainu_ngram"
           }
         }
       }
