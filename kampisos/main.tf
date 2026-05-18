@@ -65,6 +65,12 @@ resource "elasticstack_elasticsearch_index" "entries" {
       pattern = "[\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}]"
       replacement = ""
     }
+
+    japanese_code_switching = {
+      type = "pattern_replace"
+      pattern = "[\\p{Script=Latin}]"
+      replacement = ""
+    }
   })
 
   analysis_analyzer = jsonencode({
@@ -85,6 +91,9 @@ resource "elasticstack_elasticsearch_index" "entries" {
         "cjk_width",
         "kuromoji_stemmer",
         "lowercase"
+      ]
+      char_filter = [
+        "japanese_code_switching"
       ]
     }
   })
