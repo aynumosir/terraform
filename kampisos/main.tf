@@ -1,18 +1,18 @@
 terraform {
   required_providers {
     cloudflare = {
-      source = "cloudflare/cloudflare"
+      source  = "cloudflare/cloudflare"
       version = ">= 5.8.2"
     }
 
     vercel = {
-      source = "vercel/vercel"
+      source  = "vercel/vercel"
       version = ">= 4.7.1"
     }
 
     elasticstack = {
-      source = "elastic/elasticstack"
-      version = ">= 0.14.3" 
+      source  = "elastic/elasticstack"
+      version = ">= 0.14.3"
     }
 
     github = {
@@ -21,8 +21,7 @@ terraform {
     }
   }
 
-  backend "remote" {
-    hostname = "app.terraform.io"
+  cloud {
     organization = "aynumosir"
 
     workspaces {
@@ -37,159 +36,5 @@ provider "elasticstack" {
 
 provider "github" {
   owner = "aynumosir"
-}
-
-data "github_repository" "kampisos" {
-  full_name = "aynumosir/kampisos"
-}
-
-resource "elasticstack_elasticsearch_security_api_key" "vercel" {
-  name = "kampisos-vercel-production"
-
-  role_descriptors = jsonencode({
-    readonly = {
-      indices = [{
-        names      = ["kampisos-*"]
-        privileges = ["read"]
-      }]
-    }
-  })
-}
-
-resource "elasticstack_elasticsearch_index" "entries" {
-  name = "kampisos-entries"
-
-  analysis_char_filter = jsonencode({
-    ainu_code_switching = {
-      type = "pattern_replace"
-      pattern = "[\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}]"
-      replacement = ""
-    }
-
-    japanese_code_switching = {
-      type = "pattern_replace"
-      pattern = "[\\p{Script=Latin}]"
-      replacement = ""
-    }
-  })
-
-  analysis_analyzer = jsonencode({
-    ainu_standard = {
-      tokenizer = "standard"
-      char_filter = ["ainu_code_switching"]
-    }
-    ainu_ngram = {
-      tokenizer = "ngram"
-      char_filter = ["ainu_code_switching"]
-    }
-    # Standard kuromoji-analyzer without `kuromoji_part_of_speech` and `ja_stop`
-    # c.f. https://www.elastic.co/docs/reference/elasticsearch/plugins/analysis-kuromoji-analyzer
-    japanese = {
-      tokenizer = "kuromoji_tokenizer", 
-      filter = [
-        "kuromoji_baseform",
-        "cjk_width",
-        "kuromoji_stemmer",
-        "lowercase"
-      ]
-      char_filter = [
-        "japanese_code_switching"
-      ]
-    }
-  })
-
-  mappings = jsonencode({
-    properties = {
-      id = { type = "keyword" }
-      collection_lv1 = { type = "keyword" }
-      collection_lv2 = { type = "keyword" }
-      collection_lv3 = { type = "keyword" }
-      document = { type = "keyword" }
-      uri = { type = "keyword" }
-      pronoun = { type = "keyword" }
-      author = { type = "keyword" }
-      dialect = { type = "keyword" }
-      dialect_lv1 = { type = "keyword" }
-      dialect_lv2 = { type = "keyword" }
-      dialect_lv3 = { type = "keyword" }
-      text = {
-        type = "text",
-        analyzer = "ainu_standard",
-        fields = {
-          ngram = {
-            type = "text"
-            analyzer = "ainu_ngram"
-          }
-        }
-      }
-      translation = { type = "text", analyzer = "japanese" }
-      recorded_at = { type = "keyword" }
-      published_at = { type = "keyword" }
-    }
-  })
-}
-
-resource "cloudflare_dns_record" "kampisos_aynu_io" {
-  zone_id = "${var.cloudflare_zone_id}"
-  name    = "kampisos"
-  content = "8b00208f3a81a61c.vercel-dns-017.com"
-  type    = "CNAME"
-  ttl     = 1
-  proxied = false 
-}
-
-resource "vercel_project" "kampisos" {
-  name      = "kampisos"
-  framework = "nextjs"
-  git_repository = {
-    type = "github"
-    repo = data.github_repository.kampisos.full_name
-  }
-}
-
-resource "vercel_project_domain" "kampisos_aynu_io" {
-  project_id = vercel_project.kampisos.id
-  domain     = "kampisos.aynu.io"
-}
-
-resource "vercel_project_environment_variables" "kampisos" {
-  project_id = vercel_project.kampisos.id
-  variables = [
-    {
-      key    = "MICROCMS_SERVICE_DOMAIN"
-      value  = var.microcms_service_domain
-      target = ["production", "preview", "development"]
-    },
-    {
-      key       = "MICROCMS_API_KEY"
-      value     = var.microcms_api_key
-      sensitive = true
-      target    = ["production", "preview"]
-    },
-
-    {
-      key       = "ELASTICSEARCH_ENDPOINTS"
-      value     = "https://elasticsearch.neet.love",
-      target    = ["production", "preview"]
-    },
-    {
-      key       = "ELASTICSEARCH_API_KEY"
-      value     = elasticstack_elasticsearch_security_api_key.vercel.encoded
-      sensitive = true
-      target    = ["production", "preview"]
-    },
-  ]
-}
-
-resource "github_actions_secret" "kampisos_elasticsearch_api_key" {
-  repository  = data.github_repository.kampisos.name
-  secret_name = "ELASTICSEARCH_API_KEY"
-  value       = elasticstack_elasticsearch_security_api_key.vercel.encoded
-}
-
-resource "github_actions_secret" "kampisos_elasticsearch_endpoints" {
-  repository  = data.github_repository.kampisos.name
-  secret_name = "ELASTICSEARCH_ENDPOINTS"
-  value       = "https://elasticsearch.neet.love"
 }
 
