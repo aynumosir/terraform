@@ -1,11 +1,24 @@
-variable "cloudflare_zone_id" {}
+variable "domain" {
+  type        = string
+  description = "公開するURL"
+}
 
-variable "algolia_app_id" {}
-variable "algolia_api_key" {}
+variable "elasticsearch_endpoints" {
+  type        = list(string)
+  description = "ElasticsearchインスタンスのURL"
+}
 
-variable "microcms_service_domain" {}
-variable "microcms_api_key" {}
+variable "microcms_service_domain" {
+  type        = string
+  description = "更新履歴に使うMicroCMSのサービスドメイン"
+}
 
-variable "hf_mt_endpoint" {}
-variable "hf_kana_endpoint" {}
-variable "hf_token" {}
+variable "microcms_api_key" {
+  type        = string
+  description = "更新履歴に使うMicroCMSのAPIキー"
+}
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "CloudflareのZone ID（ドメインに対して割り当てられているID）"
+}
