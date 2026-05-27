@@ -17,12 +17,15 @@ resource "elasticstack_elasticsearch_index" "entries" {
   name = "kampisos-entries"
 
   analysis_char_filter = jsonencode({
+    # Removes all Japanese characters (Kanji and Kana) from Ainu texts
+    # This is for handling the code switchings
     ainu_code_switching = {
       type        = "pattern_replace"
       pattern     = "[\\p{Script=Han}\\p{Script=Hiragana}\\p{Script=Katakana}]"
       replacement = ""
     }
-
+    # Removes all Latin characters from Japanese texts
+    # Opposite for `ainu_code_switching`
     japanese_code_switching = {
       type        = "pattern_replace"
       pattern     = "[\\p{Script=Latin}]"
@@ -86,7 +89,3 @@ resource "elasticstack_elasticsearch_index" "entries" {
   })
 }
 
-moved {
-  from = elasticstack_elasticsearch_security_api_key.vercel
-  to   = elasticstack_elasticsearch_security_api_key.viewer
-}

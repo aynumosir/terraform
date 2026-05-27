@@ -67,33 +67,3 @@ resource "github_actions_secret" "elasticsearch_endpoints" {
   secret_name = "ELASTICSEARCH_ENDPOINTS"
   value       = join(" ", var.elasticsearch_endpoints)
 }
-
-moved {
-  from = cloudflare_dns_record.kampisos_aynu_io
-  to   = cloudflare_dns_record.this
-}
-
-moved {
-  from = vercel_project.kampisos
-  to   = vercel_project.this
-}
-
-moved {
-  from = vercel_project_domain.kampisos_aynu_io
-  to   = vercel_project_domain.this
-}
-
-moved {
-  from = vercel_project_environment_variables.kampisos
-  to   = vercel_project_environment_variables.this
-}
-
-moved {
-  from = github_actions_secret.kampisos_elasticsearch_api_key
-  to   = github_actions_secret.elasticsearch_api_key
-}
-
-moved {
-  from = github_actions_secret.kampisos_elasticsearch_endpoints
-  to   = github_actions_secret.elasticsearch_endpoints
-}
