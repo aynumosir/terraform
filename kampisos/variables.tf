@@ -16,6 +16,7 @@ variable "microcms_service_domain" {
 variable "microcms_api_key" {
   type        = string
   description = "更新履歴に使うMicroCMSのAPIキー"
+  sensitive   = true
 }
 
 variable "cloudflare_zone_id" {
