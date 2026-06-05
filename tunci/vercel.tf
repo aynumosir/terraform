@@ -1,4 +1,4 @@
-resource "vercel_project" "tunci" {
+resource "vercel_project" "this" {
   name      = "tunci"
   framework = "nextjs"
 
