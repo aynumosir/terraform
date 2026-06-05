@@ -23,18 +23,10 @@ moved {
   to   = vercel_project_domain.this
 }
 
-resource "vercel_project_environment_variable" "hf_mt_endpoint" {
+resource "vercel_project_environment_variable" "hf_endpoint" {
   project_id = vercel_project.this.id
-  key        = "HF_MT_ENDPOINT"
-  value      = var.hf_mt_endpoint
-  target     = ["production", "preview", "development"]
-  sensitive  = false
-}
-
-resource "vercel_project_environment_variable" "hf_kana_endpoint" {
-  project_id = vercel_project.this.id
-  key        = "HF_KANA_ENDPOINT"
-  value      = var.hf_kana_endpoint
+  key        = "HF_ENDPOINT"
+  value      = var.hf_endpoint
   target     = ["production", "preview", "development"]
   sensitive  = false
 }
