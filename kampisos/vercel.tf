@@ -9,37 +9,38 @@ resource "vercel_project" "this" {
 
 resource "vercel_project_domain" "this" {
   project_id = vercel_project.this.id
-  domain     = var.domain
+  domain     = "kampisos.aynu.io"
 }
 
-resource "vercel_project_environment_variables" "this" {
+resource "vercel_project_environment_variable" "microcms_service_domain" {
   project_id = vercel_project.this.id
-  variables = [
-    {
-      key       = "MICROCMS_SERVICE_DOMAIN"
-      value     = var.microcms_service_domain
-      sensitive = false
-      target    = ["production", "preview", "development"]
-    },
-    {
-      key       = "MICROCMS_API_KEY"
-      value     = var.microcms_api_key
-      sensitive = true
-      target    = ["production", "preview"]
-    },
+  key        = "MICROCMS_SERVICE_DOMAIN"
+  value      = var.microcms_service_domain
+  sensitive  = false
+  target     = ["production", "preview", "development"]
+}
 
-    {
-      key       = "ELASTICSEARCH_ENDPOINTS"
-      value     = join(" ", var.elasticsearch_endpoints)
-      sensitive = false
-      target    = ["production", "preview"]
-    },
-    {
-      key       = "ELASTICSEARCH_API_KEY"
-      value     = elasticstack_elasticsearch_security_api_key.viewer.encoded
-      sensitive = true
-      target    = ["production", "preview"]
-    },
-  ]
+resource "vercel_project_environment_variable" "microcms_api_key" {
+  project_id = vercel_project.this.id
+  key        = "MICROCMS_API_KEY"
+  value_wo   = var.microcms_api_key
+  sensitive  = true
+  target     = ["production", "preview"]
+}
+
+resource "vercel_project_environment_variable" "elasticsearch_endpoints" {
+  project_id = vercel_project.this.id
+  key        = "ELASTICSEARCH_ENDPOINTS"
+  value      = join(" ", var.elasticsearch_endpoints)
+  sensitive  = false
+  target     = ["production", "preview"]
+}
+
+resource "vercel_project_environment_variable" "elasticsearch_api_key" {
+  project_id = vercel_project.this.id
+  key        = "ELASTICSEARCH_API_KEY"
+  value_wo   = elasticstack_elasticsearch_security_api_key.viewer.encoded
+  sensitive  = true
+  target     = ["production", "preview"]
 }
 

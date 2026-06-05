@@ -1,8 +1,3 @@
-variable "domain" {
-  type        = string
-  description = "公開するURL"
-}
-
 variable "elasticsearch_endpoints" {
   type        = list(string)
   description = "ElasticsearchインスタンスのURL"
