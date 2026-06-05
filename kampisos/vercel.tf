@@ -1,16 +1,3 @@
-data "github_repository" "this" {
-  full_name = "aynumosir/kampisos"
-}
-
-resource "cloudflare_dns_record" "this" {
-  zone_id = var.cloudflare_zone_id
-  name    = "kampisos"
-  content = "8b00208f3a81a61c.vercel-dns-017.com"
-  type    = "CNAME"
-  ttl     = 1
-  proxied = false
-}
-
 resource "vercel_project" "this" {
   name      = "kampisos"
   framework = "nextjs"
@@ -56,14 +43,3 @@ resource "vercel_project_environment_variables" "this" {
   ]
 }
 
-resource "github_actions_secret" "elasticsearch_api_key" {
-  repository  = data.github_repository.this.name
-  secret_name = "ELASTICSEARCH_API_KEY"
-  value       = elasticstack_elasticsearch_security_api_key.viewer.encoded
-}
-
-resource "github_actions_secret" "elasticsearch_endpoints" {
-  repository  = data.github_repository.this.name
-  secret_name = "ELASTICSEARCH_ENDPOINTS"
-  value       = join(" ", var.elasticsearch_endpoints)
-}
