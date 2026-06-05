@@ -8,32 +8,42 @@ resource "vercel_project" "tunci" {
   }
 }
 
-resource "vercel_project_domain" "tunci_aynu_io" {
+resource "vercel_project_domain" "this" {
   project_id = vercel_project.tunci.id
   domain     = "tunci.aynu.io"
 }
 
-resource "vercel_project_environment_variables" "tunci" {
+moved {
+  from = vercel_project.tunci
+  to   = vercel_project.this
+}
+
+moved {
+  from = vercel_project_domain.tunci_aynu_io
+  to   = vercel_project_domain.this
+}
+
+resource "vercel_project_environment_variable" "hf_mt_endpoint" {
   project_id = vercel_project.tunci.id
-  variables = [
-    {
-      key       = "HF_MT_ENDPOINT"
-      value     = var.hf_mt_endpoint
-      target    = ["production", "preview", "development"]
-      sensitive = false
-    },
-    {
-      key       = "HF_KANA_ENDPOINT"
-      value     = var.hf_kana_endpoint
-      target    = ["production", "preview", "development"]
-      sensitive = false
-    },
-    {
-      key       = "HF_TOKEN",
-      value     = var.hf_token
-      target    = ["production", "preview"]
-      sensitive = true
-    }
-  ]
+  key        = "HF_MT_ENDPOINT"
+  value      = var.hf_mt_endpoint
+  target     = ["production", "preview", "development"]
+  sensitive  = false
+}
+
+resource "vercel_project_environment_variable" "hf_kana_endpoint" {
+  project_id = vercel_project.tunci.id
+  key        = "HF_KANA_ENDPOINT"
+  value      = var.hf_kana_endpoint
+  target     = ["production", "preview", "development"]
+  sensitive  = false
+}
+
+resource "vercel_project_environment_variable" "hf_token" {
+  project_id = vercel_project.tunci.id
+  key        = "HF_TOKEN"
+  value      = var.hf_token
+  target     = ["production", "preview"]
+  sensitive  = true
 }
 

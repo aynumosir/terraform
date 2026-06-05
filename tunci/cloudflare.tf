@@ -7,3 +7,7 @@ resource "cloudflare_dns_record" "tunci_aynu_io" {
   proxied = false
 }
 
+moved {
+  from = cloudflare_dns_record.tunci_aynu_io
+  to   = cloudflare_dns_record.this
+}
