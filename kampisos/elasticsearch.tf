@@ -60,18 +60,24 @@ resource "elasticstack_elasticsearch_index" "entries" {
 
   mappings = jsonencode({
     properties = {
-      id             = { type = "keyword" }
-      collection_lv1 = { type = "keyword" }
-      collection_lv2 = { type = "keyword" }
-      collection_lv3 = { type = "keyword" }
-      document       = { type = "keyword" }
-      uri            = { type = "keyword" }
-      pronoun        = { type = "keyword" }
-      author         = { type = "keyword" }
-      dialect        = { type = "keyword" }
-      dialect_lv1    = { type = "keyword" }
-      dialect_lv2    = { type = "keyword" }
-      dialect_lv3    = { type = "keyword" }
+      id                = { type = "keyword" }
+      collection_lv1    = { type = "keyword" }
+      collection_lv2    = { type = "keyword" }
+      collection_lv3    = { type = "keyword" }
+      document          = { type = "keyword" }
+      uri               = { type = "keyword" }
+      pronoun           = { type = "keyword" }
+      author            = { type = "keyword" }
+      dialect           = { type = "keyword" }
+      dialect_lv1       = { type = "keyword" }
+      dialect_lv2       = { type = "keyword" }
+      dialect_lv3       = { type = "keyword" }
+      recorded_at       = { type = "keyword" }
+      published_at      = { type = "keyword" }
+      recorded_by       = { type = "keyword" }
+      translated_by     = { type = "keyword" }
+      transliterated_by = { type = "keyword" }
+
       text = {
         type     = "text",
         analyzer = "ainu_standard",
@@ -82,9 +88,15 @@ resource "elasticstack_elasticsearch_index" "entries" {
           }
         }
       }
-      translation  = { type = "text", analyzer = "japanese" }
-      recorded_at  = { type = "keyword" }
-      published_at = { type = "keyword" }
+
+      translations = {
+        properties = {
+          jpn = {
+            type     = "text"
+            analyzer = "japanese"
+          }
+        }
+      }
     }
   })
 }
