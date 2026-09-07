@@ -37,10 +37,12 @@ resource "elasticstack_elasticsearch_index" "entries" {
     ainu_standard = {
       tokenizer   = "standard"
       char_filter = ["ainu_code_switching"]
+      filter      = ["lowercase"]
     }
     ainu_ngram = {
       tokenizer   = "ngram"
       char_filter = ["ainu_code_switching"]
+      filter      = ["lowercase"]
     }
     # Standard kuromoji-analyzer without `kuromoji_part_of_speech` and `ja_stop`
     # c.f. https://www.elastic.co/docs/reference/elasticsearch/plugins/analysis-kuromoji-analyzer
