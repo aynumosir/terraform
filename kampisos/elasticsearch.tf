@@ -36,10 +36,12 @@ resource "elasticstack_elasticsearch_index" "entries" {
   analysis_analyzer = jsonencode({
     ainu_standard = {
       tokenizer   = "standard"
+      filter      = ["icu_normalizer", "cjk_width", "asciifolding", "lowercase"]
       char_filter = ["ainu_code_switching"]
     }
     ainu_ngram = {
       tokenizer   = "ngram"
+      filter      = ["icu_normalizer", "cjk_width", "asciifolding", "lowercase"]
       char_filter = ["ainu_code_switching"]
     }
     # Standard kuromoji-analyzer without `kuromoji_part_of_speech` and `ja_stop`
